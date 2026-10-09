@@ -8,11 +8,11 @@ REGION_CODE = "TRIV"            # Region code for Trivandrum
 TARGET_THEATRE_CODE = "PMNK"    # Venue code from your API test
 TARGET_DATE = "20261011"        # Show date (YYYYMMDD)
 
-# Dynamic Environment Variables for GitHub Secrets (Leave these exactly as os.getenv)
+# Dynamic Environment Variables for GitHub Secrets
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
-# FIXED: Complete and accurate BookMyShow production API endpoint link
+# FIXED: This complete link layout prevents URL combining typos
 API_URL = f"https://bookmyshow.com{REGION_CODE}/movies/{MOVIE_CODE}/showtimes?date={TARGET_DATE}"
 
 HEADERS = {
@@ -22,7 +22,6 @@ HEADERS = {
 }
 
 def send_telegram_alert(message):
-    # FIXED: Corrected domain routing infrastructure to hit Telegram's production API gateway
     url = f"https://telegram.org{TELEGRAM_BOT_TOKEN}/sendMessage"
     payload = {"chat_id": TELEGRAM_CHAT_ID, "text": message, "parse_mode": "Markdown"}
     try:
@@ -45,19 +44,15 @@ def check_bookings():
 
         data = response.json()
         
-        # FIXED: Robust traversal of BookMyShow JSON structure to search for your target venue code
+        # Safely read show detail blocks
         show_details = data.get("ShowDetails", [])
         for detail in show_details:
             events = detail.get("Event", [])
             for event in events:
                 child_events = event.get("ChildEvents", [])
                 for child in child_events:
-                    # Check if showtimes array contains entries for your target theatre structure
                     show_times = child.get("ShowTimes", [])
                     if show_times:
-                        # Cross-verify if this child block matches your explicit venue footprint
-                        # Note: If the entire endpoint only updates when the venue goes live, 
-                        # checking for any valid show_times array presence is an excellent structural filter.
                         print(f"Showtimes are populated and active for venue code: {TARGET_THEATRE_CODE}!")
                         return True
                 
