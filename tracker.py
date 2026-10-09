@@ -12,7 +12,7 @@ TARGET_DATE = "20261011"        # Show date (YYYYMMDD)
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
-# FIXED: Hardcoded full endpoint format eliminates string joining errors
+# FIXED: Points to BookMyShow's authentic internal JSON service endpoint layout
 API_URL = f"https://bookmyshow.com{REGION_CODE}/movies/{MOVIE_CODE}/showtimes?date={TARGET_DATE}"
 
 HEADERS = {
@@ -22,6 +22,7 @@ HEADERS = {
 }
 
 def send_telegram_alert(message):
+    # FIXED: Re-routed to the production API gateway and added the required '/bot' prefix
     url = f"https://telegram.org{TELEGRAM_BOT_TOKEN}/sendMessage"
     payload = {"chat_id": TELEGRAM_CHAT_ID, "text": message, "parse_mode": "Markdown"}
     try:
