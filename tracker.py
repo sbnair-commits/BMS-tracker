@@ -13,8 +13,7 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
 # FIXED: Points to BookMyShow's authentic internal JSON service endpoint layout
-API_URL = f"https://bookmyshow.com{REGION_CODE}/movies/{MOVIE_CODE}/showtimes?date={TARGET_DATE}"
-
+API_URL = f"https://bookmyshow.com/{REGION_CODE}/movies/{MOVIE_CODE}/showtimes?date={TARGET_DATE}"
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Referer": "https://bookmyshow.com",
@@ -23,7 +22,7 @@ HEADERS = {
 
 def send_telegram_alert(message):
     # FIXED: Re-routed to the production API gateway and added the required '/bot' prefix
-    url = f"https://telegram.org{TELEGRAM_BOT_TOKEN}/sendMessage"
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     payload = {"chat_id": TELEGRAM_CHAT_ID, "text": message, "parse_mode": "Markdown"}
     try:
         res = requests.post(url, json=payload, timeout=10)
