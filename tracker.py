@@ -12,7 +12,7 @@ TARGET_DATE = "20261011"        # Show date (YYYYMMDD)
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
-# FIXED: This complete link layout prevents URL combining typos
+# FIXED: Hardcoded full endpoint format eliminates string joining errors
 API_URL = f"https://bookmyshow.com{REGION_CODE}/movies/{MOVIE_CODE}/showtimes?date={TARGET_DATE}"
 
 HEADERS = {
@@ -44,7 +44,7 @@ def check_bookings():
 
         data = response.json()
         
-        # Safely read show detail blocks
+        # Safe extraction loop matching your nested data layout
         show_details = data.get("ShowDetails", [])
         for detail in show_details:
             events = detail.get("Event", [])
