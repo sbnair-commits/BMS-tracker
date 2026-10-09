@@ -12,17 +12,21 @@ TARGET_DATE = "20261011"        # Show date (YYYYMMDD)
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
-# FIXED: Points to BookMyShow's authentic internal JSON service endpoint layout
-API_URL = f"https://bookmyshow.com/{REGION_CODE}/movies/{MOVIE_CODE}/showtimes?date={TARGET_DATE}"
+# Hidden API Endpoint
+API_URL = f"https://bookmyshow.com{REGION_CODE}/movies/{MOVIE_CODE}/showtimes?date={TARGET_DATE}"
+
+# ADVANCED ANTI-BOT HEADERS: Extracted straight from your successful Postman structure
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Referer": "https://bookmyshow.com",
-    "Accept": "application/json"
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Origin": "https://bookmyshow.com",
+    "x-app-code": "WEB", # Tells their server this request is from the standard web client interface
 }
 
 def send_telegram_alert(message):
-    # FIXED: Re-routed to the production API gateway and added the required '/bot' prefix
-    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+    url = f"https://telegram.org{TELEGRAM_BOT_TOKEN}/sendMessage"
     payload = {"chat_id": TELEGRAM_CHAT_ID, "text": message, "parse_mode": "Markdown"}
     try:
         res = requests.post(url, json=payload, timeout=10)
@@ -38,13 +42,14 @@ def check_bookings():
     try:
         response = requests.get(API_URL, headers=HEADERS, timeout=15)
         
+        # Log details to see why if it's blocking
         if response.status_code != 200:
             print(f"Showtimes endpoint offline or returning status code: {response.status_code}")
             return False
 
         data = response.json()
         
-        # Safe extraction loop matching your nested data layout
+        # Traverse BookMyShow JSON structure
         show_details = data.get("ShowDetails", [])
         for detail in show_details:
             events = detail.get("Event", [])
