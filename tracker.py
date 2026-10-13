@@ -3,16 +3,14 @@ import sys
 import requests
 
 # --- CONFIGURATION ---
-MOVIE_CODE = "ET00507359"       # Avaraachan & Sons
+MOVIE_CODE = "ET00507359"       # MOVIE CODE
 TARGET_THEATRE_CODE = "PMNK"    # PVR Mymoon, Kochi
 TARGET_DATE = "20261011"        # YYYYMMDD (use a date that is still disabled to wait for it to open)
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
-# Paste the EXACT URL from Postman (</> Code -> Python - Requests) into a GitHub
-# secret named BMS_API_URL. Keeping it in a secret avoids hardcoding session params.
-API_URL = os.getenv("BMS_API_URL")
+
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -22,8 +20,7 @@ HEADERS = {
     "Referer": "https://in.bookmyshow.com/",
     "Origin": "https://in.bookmyshow.com",
 }
-# Optional: copy any extra headers/cookies Postman sent into a secret
-# named BMS_COOKIE (the raw "Cookie" header value).
+
 if os.getenv("BMS_COOKIE"):
     HEADERS["Cookie"] = os.getenv("BMS_COOKIE")
 
